@@ -1,0 +1,18 @@
+<div class="px-4 pb-4">
+    <table class="w-100">
+        <tr *ngFor="let game of gameResults">
+            <td>
+                <img [src]="game.teams.away.logo" width="30" alt="away team logo">
+            </td>
+            <td>{{game.teams.away.name}}</td>
+            <td>{{game.goals.away}}</td>
+            <td>-</td>
+            <td>{{game.goals.home}}</td>
+            <td>{{game.teams.home.name}}</td>
+            <td>
+                <img [src]="game.teams.home.logo" width="30" alt="home team logo">
+            </td>
+        </tr>
+    </table>
+    <button *ngIf="gameResults" type="button" class="btn btn-primary mt-4 w-25" (click)="onClickBack()">Back</button>
+</div>
