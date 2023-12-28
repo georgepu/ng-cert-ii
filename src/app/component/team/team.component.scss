@@ -1,6 +1,8 @@
 table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     border: 1px solid #ddd;
+    border-radius: 20px;
     td {
         padding: 8px;
         text-align: center;
