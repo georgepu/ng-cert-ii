@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 export class GlobalService {
   cacheStore: { [key: number]: Observable<any> } = {};
   currentLeague = TOP_LEAGUES.ENGLAND;
+  isLoading = false;
 
   constructor() { }
 

@@ -1,4 +1,4 @@
-<header class="container p-4">
+<header class="container p-4 big-image">
   <nav class="navbar bg-body-tertiary rounded-pill nav-underline">
     <div class="container-fluid justify-content-around">
       <ng-container *ngFor="let item of navItems">
@@ -7,4 +7,9 @@
     </div>
   </nav>
 </header>
+<div *ngIf="isLoading" id="spinner" class="d-flex justify-content-center align-items-center" style="backdrop-filter: brightness(.5);">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
 <router-outlet></router-outlet>

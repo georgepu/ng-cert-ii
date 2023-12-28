@@ -6,7 +6,15 @@ import { HttpParams } from '@angular/common/http';
 import { AppConstant, NAV_ITEMS } from './constant/app-constant';
 import { Router } from '@angular/router';
 import { GlobalService } from './service/global.service';
-import { shareReplay } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  catchError,
+  of,
+  shareReplay,
+  takeUntil,
+  throwError,
+} from 'rxjs';
 import { LeagueStandingComponent } from './component/league-standing/league-standing.component';
 import { NavItem } from './model/app-model';
 
@@ -18,13 +26,21 @@ import { NavItem } from './model/app-model';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  private _onDestroy$: Subject<void> = new Subject();
   navItems = structuredClone(NAV_ITEMS);
+  get isLoading() {
+    return this.globalService.isLoading;
+  }
 
   constructor(
     private globalService: GlobalService,
     private httpService: HttpService,
     private router: Router
   ) {}
+
+  ngOnDestroy() {
+    this._onDestroy$.next();
+  }
 
   ngOnInit() {
     this.navItems.forEach((item) => {
@@ -57,12 +73,18 @@ export class AppComponent {
   }
 
   navigateLeague(item: NavItem) {
-    this.globalService.cacheStore[item.league_id].subscribe((data) => {
-      this.router.navigate(['/'], {
-        state: {
-          data: data,
-        },
+    this.globalService.isLoading = true;
+    this.globalService.cacheStore[item.league_id]
+      .pipe(
+        takeUntil(this._onDestroy$),
+        catchError(err => throwError(() => console.log(err)))
+        )
+      .subscribe((data) => {
+        this.router.navigate(['/'], {
+          state: {
+            data: data,
+          },
+        });
       });
-    });
   }
 }

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 import { HttpService } from 'app/service/http.service';
 import { AppConstant } from 'app/constant/app-constant';
 import { HttpParams } from '@angular/common/http';
-import { concatMap } from 'rxjs';
+import { Subject, catchError, concatMap, takeUntil, throwError } from 'rxjs';
 import { GlobalService } from 'app/service/global.service';
 
 @Component({
@@ -15,6 +15,7 @@ import { GlobalService } from 'app/service/global.service';
   styleUrl: './team.component.scss',
 })
 export class TeamComponent {
+  private _onDestroy$: Subject<void> = new Subject();
   gameResults!: any;
 
   constructor(
@@ -32,16 +33,28 @@ export class TeamComponent {
             options = {
               redirect: 'follow',
             };
-          return this.httpService.get(params, 'fixtures', options);
+          return this.httpService.get(params, 'fixtures', options).pipe(
+            takeUntil(this._onDestroy$),
+            catchError(err => throwError(() => console.log(err)))
+          );
         })
       )
       .subscribe((data) => {
         this.gameResults = data.response.slice(0, 10);
+        this.globalService.isLoading = false;
       });
   }
 
+  onDestroy() {
+    this._onDestroy$.next();
+  }
+
   onClickBack() {
-    this.globalService.cacheStore[this.globalService.currentLeague].subscribe(
+    this.globalService.isLoading = true;
+    this.globalService.cacheStore[this.globalService.currentLeague].pipe(
+      takeUntil(this._onDestroy$),
+      catchError(err => throwError(() => console.log(err)))
+    ).subscribe(
       (data) => {
         this.router.navigate(['/'], {
           state: {
