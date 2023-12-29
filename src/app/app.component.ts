@@ -6,17 +6,10 @@ import { HttpParams } from '@angular/common/http';
 import { AppConstant, NAV_ITEMS } from './constant/app-constant';
 import { Router } from '@angular/router';
 import { GlobalService } from './service/global.service';
-import {
-  Observable,
-  Subject,
-  catchError,
-  of,
-  shareReplay,
-  takeUntil,
-  throwError,
-} from 'rxjs';
+import { Subject, catchError, shareReplay, takeUntil, throwError } from 'rxjs';
 import { LeagueStandingComponent } from './component/league-standing/league-standing.component';
 import { NavItem } from './model/app-model';
+import { Standing } from './model/league-standing';
 
 @Component({
   selector: 'app-root',
@@ -51,7 +44,7 @@ export class AppComponent {
           redirect: 'follow',
         };
       this.globalService.cacheStore[item.league_id] = this.httpService
-        .get(params, 'standings', options)
+        .get<Standing>(params, 'standings', options)
         .pipe(shareReplay(1));
     });
     this.navigateLeague(this.navItems[0]);
@@ -77,8 +70,8 @@ export class AppComponent {
     this.globalService.cacheStore[item.league_id]
       .pipe(
         takeUntil(this._onDestroy$),
-        catchError(err => throwError(() => console.log(err)))
-        )
+        catchError((err) => throwError(() => console.log(err)))
+      )
       .subscribe((data) => {
         this.router.navigate(['/'], {
           state: {

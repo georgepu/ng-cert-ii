@@ -6,6 +6,7 @@ import { AppConstant } from 'app/constant/app-constant';
 import { HttpParams } from '@angular/common/http';
 import { Subject, catchError, concatMap, takeUntil, throwError } from 'rxjs';
 import { GlobalService } from 'app/service/global.service';
+import { TeamGameResults, Fixtures } from 'app/model/team-game-results';
 
 @Component({
   selector: 'app-team',
@@ -16,7 +17,7 @@ import { GlobalService } from 'app/service/global.service';
 })
 export class TeamComponent {
   private _onDestroy$: Subject<void> = new Subject();
-  gameResults!: any;
+  gameResults!: TeamGameResults[];
 
   constructor(
     private route: ActivatedRoute,
@@ -33,13 +34,13 @@ export class TeamComponent {
             options = {
               redirect: 'follow',
             };
-          return this.httpService.get(params, 'fixtures', options).pipe(
+          return this.httpService.get<Fixtures>(params, 'fixtures', options).pipe(
             takeUntil(this._onDestroy$),
             catchError(err => throwError(() => console.log(err)))
           );
         })
       )
-      .subscribe((data) => {
+      .subscribe(data => {
         this.gameResults = data.response.slice(0, 10);
         this.globalService.isLoading = false;
       });

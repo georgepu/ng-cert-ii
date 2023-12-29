@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppConstant } from 'app/constant/app-constant';
 import { Observable } from 'rxjs';
@@ -9,15 +9,19 @@ import { Observable } from 'rxjs';
 export class HttpService {
   constructor(private httpClient: HttpClient) {}
 
-  get(params: any, endpoint: string, options?: any): Observable<any> {
+  get<T>(
+    params: HttpParams,
+    endpoint: string,
+    options?: { redirect: string }
+  ): Observable<T> {
     const url = AppConstant.BASE_API_URL + endpoint,
-      headers = new Headers();
-    headers.append('x-rapidapi-key', AppConstant.API_KEY);
-    headers.append('x-rapidapi-host', AppConstant.HOST);
+      headers = new HttpHeaders()
+        .append('x-rapidapi-key', AppConstant.API_KEY)
+        .append('x-rapidapi-host', AppConstant.HOST);
     return this.httpClient.get(url, {
       params: params,
       headers: headers,
-      ...options
-    });
+      ...options,
+    }) as Observable<T>;
   }
 }

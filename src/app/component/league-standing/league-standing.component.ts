@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GlobalService } from 'app/service/global.service';
+import { LeagueStanding } from 'app/model/league-standing';
 
 @Component({
   selector: 'app-league-standing',
@@ -11,7 +12,7 @@ import { GlobalService } from 'app/service/global.service';
   styleUrl: './league-standing.component.scss',
 })
 export class LeagueStandingComponent {
-  leagueStandingData!: any;
+  leagueStandingData!: LeagueStanding[];
 
   constructor(private globalService: GlobalService, private router: Router) {
     this.router.events.subscribe(() => {
