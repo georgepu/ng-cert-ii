@@ -19,7 +19,7 @@ export class LeagueStandingComponent {
       const navigation = this.router.getCurrentNavigation();
       if (navigation && navigation.extras.state) {
         this.leagueStandingData =
-          navigation.extras.state['data'].response[0].league.standings[0];
+          navigation.extras.state['data'].response[0]?.league.standings[0];
           this.globalService.isLoading = false;
       }
     });
